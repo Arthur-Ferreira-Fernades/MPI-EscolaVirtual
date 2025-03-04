@@ -1,0 +1,97 @@
+/* Estiliza a navbar */
+
+
+.navbar {
+    background-color: #1a73e8; /* Azul Google */
+}
+
+.navbar-brand img {
+    height: 40px;
+}
+
+/* Estiliza o container principal */
+.container {
+    max-width: 1200px;
+}
+
+h2 {
+    margin-top: 5rem;
+}
+
+/* Botões de navegação da semana */
+.d-flex.justify-content-between a {
+    margin: 2rem 0 0 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Tabela da agenda */
+.agenda-container {
+    margin-top: 20px;
+}
+
+.table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table th {
+    background: #f1f3f4;
+    color: #202124;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.1rem;
+}
+
+.table td {
+    height: 120px;
+    vertical-align: top;
+    padding: 10px;
+    font-size: 0.95rem;
+}
+
+/* Estiliza os blocos das aulas */
+.agenda-aula {
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Aula já realizada (verde) */
+.bg-success {
+    background: #34a853 !important;
+    color: white !important;
+}
+
+/* Aula programada (azul claro) */
+.bg-light {
+    background: #d2e3fc !important;
+    color: #174ea6 !important;
+    border: 1px solid #174ea6;
+}
+
+/* Caso não tenha aulas */
+.text-muted {
+    color: #757575 !important;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 0.85rem;
+        padding: 5px;
+    }
+
+    .agenda-aula {
+        font-size: 0.8rem;
+    }
+
+    .d-flex.justify-content-between a {
+        font-size: 0.9rem;
+    }
+}

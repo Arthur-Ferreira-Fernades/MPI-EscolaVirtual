@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 03/03/2025 às 07:37
+-- Tempo de geração: 04/03/2025 às 06:04
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -32,18 +32,23 @@ CREATE TABLE `alunos` (
   `AluNome` varchar(100) NOT NULL,
   `AluEmail` varchar(100) NOT NULL,
   `AluFoto` varchar(255) DEFAULT 'padrao.png',
-  `TurmaId` int(11) DEFAULT NULL
+  `TurmaId` int(11) DEFAULT NULL,
+  `AluTelefone` varchar(15) NOT NULL,
+  `AluNascimento` date DEFAULT NULL,
+  `AluCPF` varchar(14) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `alunos`
 --
 
-INSERT INTO `alunos` (`AluId`, `AluNome`, `AluEmail`, `AluFoto`, `TurmaId`) VALUES
-(1, 'Lucas Ferreira', 'lucas@email.com', 'lucas.png', NULL),
-(2, 'Mariana Lima', 'mariana@email.com', 'mariana.png', NULL),
-(4, 'Arthur', 'arthuraluno@132.com', 'padrao.png', NULL),
-(5, 'Rafael T', 'rafatomizawa@gmail.com', 'padrao.png', 1);
+INSERT INTO `alunos` (`AluId`, `AluNome`, `AluEmail`, `AluFoto`, `TurmaId`, `AluTelefone`, `AluNascimento`, `AluCPF`) VALUES
+(1, 'Lucas Ferreira', 'lucas@email.com', 'lucas.png', NULL, '', NULL, ''),
+(2, 'Mariana Lima', 'mariana@email.com', 'mariana.png', NULL, '', NULL, ''),
+(4, 'Arthur', 'arthuraluno@132.com', 'padrao.png', 8, '', NULL, ''),
+(5, 'Rafael T', 'rafatomizawa@gmail.com', 'padrao.png', 1, '', NULL, ''),
+(10, ' Ericles Oliveira', 'eoliveira@kenwin.net', 'padrao.png', 6, '123456789', '2025-03-03', '132456789'),
+(11, 'Adrielle S', 'adrielle.silva@softys.com', 'padrao.png', 7, '123456798', '2025-03-03', '123459185');
 
 -- --------------------------------------------------------
 
@@ -56,15 +61,20 @@ CREATE TABLE `aulas` (
   `TurmaId` int(11) NOT NULL,
   `ProfId` int(11) NOT NULL,
   `DataAula` date NOT NULL,
-  `Conteudo` text NOT NULL
+  `Conteudo` text NOT NULL,
+  `HoraInicio` time NOT NULL DEFAULT '00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `aulas`
 --
 
-INSERT INTO `aulas` (`AulaId`, `TurmaId`, `ProfId`, `DataAula`, `Conteudo`) VALUES
-(3, 1, 7, '2025-02-26', 'SOLO VIMOS UNA HERRAMIENTA DE TRADUCCIÓN CON IA (ALSTOM).');
+INSERT INTO `aulas` (`AulaId`, `TurmaId`, `ProfId`, `DataAula`, `Conteudo`, `HoraInicio`) VALUES
+(3, 1, 7, '2025-02-26', 'SOLO VIMOS UNA HERRAMIENTA DE TRADUCCIÓN CON IA (ALSTOM).', '00:00:00'),
+(5, 6, 7, '2025-03-05', 'Bla', '00:00:00'),
+(6, 8, 7, '2025-03-05', 'TESTE', '12:00:00'),
+(7, 8, 7, '2025-03-05', 'Teste', '12:00:00'),
+(8, 8, 7, '2025-03-06', 'asd', '12:00:00');
 
 -- --------------------------------------------------------
 
@@ -84,7 +94,11 @@ CREATE TABLE `presencas` (
 --
 
 INSERT INTO `presencas` (`PresencaId`, `AulaId`, `AluId`, `Presente`) VALUES
-(2, 3, 5, 1);
+(2, 3, 5, 1),
+(4, 5, 10, 1),
+(5, 6, 4, 1),
+(6, 7, 4, 0),
+(7, 8, 4, 0);
 
 -- --------------------------------------------------------
 
@@ -106,7 +120,8 @@ CREATE TABLE `professores` (
 
 INSERT INTO `professores` (`ProfId`, `ProNome`, `ProEmail`, `ProSenha`, `ProFoto`) VALUES
 (7, 'Juve', 'juve@123.com', '123', 'IMG-20221008-WA0022.jpg'),
-(8, 'arthur', 'arthur@123.com', '123', 'padrao.png');
+(8, 'arthur', 'arthur@123.com', '123', 'padrao.png'),
+(9, 'Carmen R', 'carmen@123.com', '123', 'padrao.png');
 
 -- --------------------------------------------------------
 
@@ -128,7 +143,10 @@ CREATE TABLE `turmas` (
 --
 
 INSERT INTO `turmas` (`TurmaId`, `TurmaNome`, `ProfId`, `DiasSemana`, `Horarios`, `TurmaReuniao`) VALUES
-(1, 'Rafael T', 7, 'Quarta-feira', '{\"Quarta-feira\":\"13:00\"}', 'meet.google.com/xxv-ajik-vrm');
+(1, 'Rafael T', 7, 'Quarta-feira', '{\"Quarta-feira\":\"12:00\"}', 'meet.google.com/xxv-ajik-vrm'),
+(6, 'Ericles O', 7, 'Quarta-feira, Sexta-feira', '{\"Quarta-feira\":\"14:00\",\"Sexta-feira\":\"14:00\"}', 'meet.google.com/ked-knxh-cvh'),
+(7, 'Adrielle A1', 9, 'Sábado', '{\"S\\u00e1bado\":\"07:00\"}', 'meet.google.com/tbe-ujkv-kap'),
+(8, 'Arthur', 7, 'Sábado', '{\"S\\u00e1bado\":\"12:00\"}', '');
 
 --
 -- Índices para tabelas despejadas
@@ -178,31 +196,31 @@ ALTER TABLE `turmas`
 -- AUTO_INCREMENT de tabela `alunos`
 --
 ALTER TABLE `alunos`
-  MODIFY `AluId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `AluId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de tabela `aulas`
 --
 ALTER TABLE `aulas`
-  MODIFY `AulaId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `AulaId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de tabela `presencas`
 --
 ALTER TABLE `presencas`
-  MODIFY `PresencaId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `PresencaId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de tabela `professores`
 --
 ALTER TABLE `professores`
-  MODIFY `ProfId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `ProfId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de tabela `turmas`
 --
 ALTER TABLE `turmas`
-  MODIFY `TurmaId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `TurmaId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Restrições para tabelas despejadas

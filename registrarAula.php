@@ -2,7 +2,6 @@
 session_start();
 require('scripts/conectaBanco.php');
 
-// Verifica se o usuário está logado
 if (!isset($_SESSION['usuario_validado']) || $_SESSION['usuario_validado'] !== true) {
     header("location: index.php?login=erro");
     exit();
@@ -17,23 +16,22 @@ $stmtTurma = $conexao->prepare($sqlTurma);
 $stmtTurma->execute([$turmaId, $profId]);
 $turma = $stmtTurma->fetch(PDO::FETCH_ASSOC);
 
-// Se a turma não for do professor, redireciona
 if (!$turma) {
     header("location: home.php");
     exit();
 }
 
-// Se o formulário for enviado para registrar aula e presenças
+// Se o formulário for enviado para registrar a aula
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrarAula'])) {
     $dataAula = $_POST['DataAula'];
+    $horaInicio = $_POST['HoraInicio'];
     $conteudoAula = $_POST['ConteudoAula'];
 
-    // Insere a aula no banco associando ao professor
-    $sqlInsertAula = "INSERT INTO Aulas (TurmaId, ProfId, DataAula, Conteudo) VALUES (?, ?, ?, ?)";
+    // Insere a aula no banco associando a hora de início
+    $sqlInsertAula = "INSERT INTO Aulas (TurmaId, ProfId, DataAula, HoraInicio, Conteudo) VALUES (?, ?, ?, ?, ?)";
     $stmtInsertAula = $conexao->prepare($sqlInsertAula);
-    $stmtInsertAula->execute([$turmaId, $profId, $dataAula, $conteudoAula]);
+    $stmtInsertAula->execute([$turmaId, $profId, $dataAula, $horaInicio, $conteudoAula]);
 
-    // Obtém o ID da aula recém-criada
     $aulaId = $conexao->lastInsertId();
 
     // Registra a presença dos alunos
@@ -50,12 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrarAula'])) {
     exit();
 }
 
-// Busca aulas já registradas com o professor que registrou
-$sqlAulas = "SELECT Aulas.AulaId, Aulas.DataAula, Aulas.Conteudo, professores.ProNome 
-             FROM Aulas 
-             JOIN professores ON Aulas.ProfId = professores.ProfId
-             WHERE Aulas.TurmaId = ? 
-             ORDER BY Aulas.DataAula DESC";
+// Busca aulas já registradas
+$sqlAulas = "SELECT A.AulaId, A.DataAula, A.HoraInicio, A.Conteudo, P.ProNome 
+             FROM Aulas A 
+             JOIN Professores P ON A.ProfId = P.ProfId
+             WHERE A.TurmaId = ? 
+             ORDER BY A.DataAula DESC, A.HoraInicio ASC";
 $stmtAulas = $conexao->prepare($sqlAulas);
 $stmtAulas->execute([$turmaId]);
 $aulas = $stmtAulas->fetchAll(PDO::FETCH_ASSOC);
@@ -83,6 +81,11 @@ $alunos = $stmtAlunos->fetchAll(PDO::FETCH_ASSOC);
         <div class="mb-3">
             <label class="form-label">Data da Aula:</label>
             <input type="date" class="form-control" name="DataAula" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Hora de Início:</label>
+            <input type="time" class="form-control" name="HoraInicio" required>
         </div>
 
         <div class="mb-3">
@@ -119,7 +122,7 @@ $alunos = $stmtAlunos->fetchAll(PDO::FETCH_ASSOC);
         <ul class="list-group">
             <?php foreach ($aulas as $aula): ?>
                 <li class="list-group-item">
-                    <strong><?= date('d/m/Y', strtotime($aula['DataAula'])); ?>:</strong> <?= htmlspecialchars($aula['Conteudo']); ?>
+                    <strong><?= date('d/m/Y', strtotime($aula['DataAula'])); ?> - <?= date('H:i', strtotime($aula['HoraInicio'])); ?>:</strong> <?= htmlspecialchars($aula['Conteudo']); ?>
                     <br><small><em>Registrado por: <?= htmlspecialchars($aula['ProNome']); ?></em></small>
                 </li>
             <?php endforeach; ?>
